@@ -2,6 +2,7 @@ from app import app
 from utils.utils import *
 import requests
 from flask import render_template, request, send_file, flash
+from os import path, makedirs
 
 
 def country_is_in_file(country_for_check) -> bool:
@@ -106,5 +107,9 @@ if __name__ == '__main__':
     with open("utils/countries.txt", "r") as countries_file:
         # считать все страны из файла
         countries = countries_file.readlines()
+
+    if not path.exists('reports'):
+        # создать папку для отчетов
+        makedirs('reports')
 
     app.run()
