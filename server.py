@@ -4,6 +4,18 @@ import requests
 from flask import render_template, request, send_file, flash
 
 
+def country_is_in_file(country_for_check) -> bool:
+    """ Проверка наличия страны в файле countries.txt """
+
+    if (country_for_check.lower() + "\n") not in countries:
+        # страна не найдена
+        flash("I have no data for this country")
+        return False
+    else:
+        # страна найдена
+        return True
+
+
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -90,4 +102,9 @@ def index():
 
 
 if __name__ == '__main__':
+
+    with open("utils/countries.txt", "r") as countries_file:
+        # считать все страны из файла
+        countries = countries_file.readlines()
+
     app.run()

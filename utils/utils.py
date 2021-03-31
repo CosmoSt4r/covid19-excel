@@ -1,5 +1,5 @@
 import datetime
-from flask import flash, send_file
+from flask import flash
 from openpyxl import Workbook
 from openpyxl.chart import LineChart, Reference
 
@@ -7,25 +7,8 @@ from openpyxl.chart import LineChart, Reference
 def prepare(country, date_from, date_to) -> str:
     """ Подготовка API запроса """
 
-    query = 'https://api.covid19tracking.narrativa.com/api/country/:country?date_from=:date_from&date_to=:date_to'
-    query = query.replace(':country', country).replace(':date_from', str(date_from)).replace(':date_to', str(date_to))
+    query = f'https://api.covid19tracking.narrativa.com/api/country/{country}?date_from={date_from}&date_to={date_to}'
     return query
-
-
-def country_is_in_file(country_for_check) -> bool:
-    """ Проверка наличия страны в файле countries.txt """
-
-    with open("utils/countries.txt", "r") as countries_file:
-        # считать все страны из файла
-        countries = countries_file.readlines()
-
-        if (country_for_check.lower() + "\n") not in countries:
-            # страна не найдена
-            flash("I have no data for this country")
-            return False
-        else:
-            # страна найдена
-            return True
 
 
 def make_charts(ws, data, country):
@@ -92,12 +75,7 @@ def make_charts(ws, data, country):
     ws.add_chart(chart, "T15")
 
 
-def make_excel_report(data, country, include_charts) -> str:
-    """ Создание финального отчета """
-
-    # Создаем workbook excel и забираем активный worksheet
-    wb = Workbook()
-    ws = wb.active
+def sort_data_in_rows(data, country):
 
     rows = [('Date:', 'today confirmed cases',
              'new confirmed cases:', 'today active cases:',
@@ -110,6 +88,18 @@ def make_excel_report(data, country, include_charts) -> str:
                      statistic['today_open_cases'], statistic['today_new_open_cases'],
                      statistic['today_recovered'], statistic['today_new_recovered'],
                      statistic['today_deaths'], statistic['today_new_deaths']))
+
+    return rows
+
+
+def make_excel_report(data, country, include_charts) -> str:
+    """ Создание финального отчета """
+
+    # Создаем workbook excel и забираем активный worksheet
+    wb = Workbook()
+    ws = wb.active
+
+    rows = sort_data_in_rows(data, country)
 
     for row in rows:
         ws.append(row)
@@ -133,17 +123,7 @@ def make_csv_report(data, country) -> str:
     timestamp = datetime.datetime.now().strftime("%d-%m-%Y %H.%M.%S")
     csv_report = open("reports/" + timestamp + " " + country + ".csv", 'w')
 
-    rows = [('Date:', 'today confirmed cases',
-             'new confirmed cases:', 'today active cases:',
-             'new active cases:', 'today recovered cases:',
-             'new recovered cases:', 'today deaths:', 'new deaths:',)]
-
-    for date in data['dates']:
-        statistic = data['dates'][date]['countries'][country]
-        rows.append((date, statistic['today_confirmed'], statistic['today_new_confirmed'],
-                     statistic['today_open_cases'], statistic['today_new_open_cases'],
-                     statistic['today_recovered'], statistic['today_new_recovered'],
-                     statistic['today_deaths'], statistic['today_new_deaths']))
+    rows = sort_data_in_rows(data, country)
 
     for row in rows:
         for element in row:
