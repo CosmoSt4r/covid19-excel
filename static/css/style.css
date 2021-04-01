@@ -6,9 +6,11 @@
 }
 
 body{
+  height: 100vh;
+  background: rgb(238,238,238);
+  background: linear-gradient(143deg, rgba(238,238,238,1) 0%, rgba(34,34,34,1) 100%);
   margin: 0;
   padding: 0;
-  background: #191919;
 }
 
 .box{
