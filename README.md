@@ -55,3 +55,13 @@ python server.py
 
 Open your browser and go to the `127.0.0.1:5000` address. You will see the main page.
 
+## Credits
+
+This is just a fork of original [repo](https://github.com/AlexNickrodef/covid19-excel) 
+created by [AlexNickrodef](https://github.com/AlexNickrodef).
+
+Thanks to W.S.Toh and his [blog](https://code-boxx.com/) 
+for free to use pretty [date picker](https://code-boxx.com/simple-datepicker-pure-javascript-css/).
+
+This project works using Coronavirus Data [API](https://covid19tracking.narrativa.com/index_en.html)
+ by [Narrativa](https://www.narrativa.com/es/inicio/).

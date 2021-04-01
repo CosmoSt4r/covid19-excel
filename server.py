@@ -5,7 +5,7 @@ from flask import render_template, request, send_file, flash
 from os import path, makedirs
 
 
-def country_is_in_file(country_for_check) -> None:
+def country_is_in_file(country_for_check) -> bool:
     """ Проверка наличия страны в файле countries.txt """
 
     if (country_for_check.lower() + "\n") not in countries:
